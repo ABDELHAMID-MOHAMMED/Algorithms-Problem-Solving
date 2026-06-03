@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <iomanip>
+#include <limits>
 using namespace std;
 const string ClientsFileName = "Client.txt";
 void ShowMainMenu();
@@ -18,7 +19,7 @@ struct sClient
 };
 enum enMainMenuOptions {
 	SHOWINGCLIENTLISTS=1, ADDNEWCLIENT=2, DELETECLIENT=3,
-	UBDATECLIENTINFO=4, FINDCLIENT=5,TRANSACTIONS=6,EXIT=7
+	UPDATECLIENTINFO=4, FINDCLIENT=5,TRANSACTIONS=6,EXIT=7
 };
 enum enTransactionMenu { DEPOSIT = 1,WITHDRAW=2,TOTALBALANCE=3,MainMenu=4 };
 vector<string> SplitString(string S1, string Delim)
@@ -45,7 +46,6 @@ sClient ReadNewClient()
 {
 	sClient Client;
 
-	// استخدمنا cin >> ws عشان نطير أي Enter معلقة في الـ Buffer وتمنع تخطي الأسطر
 	cout << "Enter Account Number? ";
 	getline(cin >> ws, Client.AccountNumber);
 
@@ -63,14 +63,6 @@ sClient ReadNewClient()
 
 	return Client;
 }
-//void AddNewClient()
-//{
-//	cout << "=========================\n";
-//	cout << "\tAdding New Client\n";
-//	cout << "=========================\n";
-//
-//	ReadNewClient();
-//}
 sClient ReadClientDataForUpdate(string AccountNumber)
 {
 	sClient Client;
@@ -110,7 +102,7 @@ sClient ConvertLinetoRecord(string Line, string Seperator =" ")
 	Client.PinCode = vClientData[1];
 	Client.Name = vClientData[2];
 	Client.Phone = vClientData[3];
-	Client.AccountBalance = stod(vClientData[4]);//cast string todouble
+	Client.AccountBalance = stod(vClientData[4]);//cast string todouble 
 		return Client;
 }
 string ConvertRecordToLine(sClient Client, string Seperator =" ")
@@ -155,7 +147,7 @@ void PrintClientBalance(sClient Client)
 	cout << "| " << setw(40) << left << Client.Name;
 	cout << "| " << setw(12) << left << Client.AccountBalance;
 }
-void PrintSerchClient(sClient Client)
+void PrintSearchClient(sClient Client)
 {
 	"\n_______________________________________________________";
 	cout << "_________________________________________\n" << endl;
@@ -217,7 +209,7 @@ void ShowTotalBalance()
 	cout << "_________________________________________\n" << endl;
 	cout << "\t\t\t\t\t Total Balance : " << TotalBalances << endl;
 }
-bool SerchClient(string Account,sClient &Client)
+bool SearchClient(string Account,sClient &Client)
 {
 	vector <sClient> vClient = LoadCleintsDataFromFile(ClientsFileName);
 	for (sClient& C : vClient)
@@ -227,10 +219,9 @@ bool SerchClient(string Account,sClient &Client)
 			Client = C;
 			return true;
 		}
-		else {
-			return false;
-		}
 	}
+			return false;	
+	
 }
 bool MarkClientForDeleteByAccountNumber(string AccountNumber,vector <sClient>& vClients)
 {
@@ -248,30 +239,22 @@ string ReadAccount()
 {
 	string Account;
 	cout << "enter the Account Number : ";
-	getline(cin >> ws, Account);
+	getline(cin, Account);
 	return Account;
 }
 void AddNewClient()
 {
-	/*char AddMore = 'Y';
-	do
-	{*/
-
-	system("cls");// تنظيف الشاشة في كل لفة
+	
+	system("cls");
 	cout << "Adding New Client:\n\n";
 
 	sClient Client = ReadNewClient();
 
-	// بنحول الـ Struct لسطر واحد
 	string stLine = ConvertRecordToLine(Client, " ");
 
-	// بنحفظ السطر في الملف
 	AddDataLineToFile("Client.txt", stLine);
 
-	/*	cout << "\nClient Added Successfully, do you want to add more clients? Y/N? ";
-		cin >> AddMore;
 
-	} while (AddMore == 'Y' || AddMore == 'y');*/
 }
 vector<sClient> SaveClientsDataToFile(string FileName, vector<sClient>& vClient)
 {
@@ -329,7 +312,7 @@ bool DeleteClient(string Account,vector<sClient> &vClient)
 	
 	if (FindClientByAccountNumber(Account,vClient,Client))
 	{
-		PrintSerchClient(Client);
+		PrintSearchClient(Client);
 		cout << "\n Are your sure you want to delete this Client : y/n ?";
 		cin >> Answer;
 		 if(Answer=='Y'||Answer=='y')
@@ -358,14 +341,14 @@ void ShowDeleteClient()
 	DeleteClient(Account, vClient);
 
 }
-bool UbdateClient(string Account, vector<sClient>& vClient)
+bool UpdateClient(string Account, vector<sClient>& vClient)
 {
 	sClient Client;
 	char Answer = 'n';
 
 	if (FindClientByAccountNumber(Account, vClient, Client))
 	{
-		PrintSerchClient(Client);
+		PrintSearchClient(Client);
 		cout << "\n Are your sure you want to Ubdate this Client : y/n ?";
 		cin >> Answer;
 		if (Answer == 'Y' || Answer == 'y')
@@ -398,7 +381,7 @@ void ShowUpdateClientScreen()
 	cout << "-----------------------\n";
 	vector <sClient>vClient = LoadCleintsDataFromFile(ClientsFileName);
 	string Account = ReadAccount();
-	UbdateClient(Account, vClient);
+	UpdateClient(Account, vClient);
 }
 void GoBackToMainMenu()
 {
@@ -417,6 +400,7 @@ short ReadMainMenuOption()
 	cout << " CHOSE WHAT DO YOU WANT TO DO [1 TO 6] ?\n";
 	short Choise = 0;
 	cin >> Choise;
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
 	return Choise;
 }
 short ReadTransactionMenu()
@@ -424,6 +408,7 @@ short ReadTransactionMenu()
 	cout << " CHOSE WHAT DO YOU WANT TO DO [1 TO 4] ?\n";
 	short Choise = 0;
 	cin >> Choise;
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
 	return Choise;
 }
 void ShowEndScreen()
@@ -438,10 +423,10 @@ bool DepositFromClient(string Account, vector<sClient>& vClient)
 	int Deposit;
 	if (FindClientByAccountNumber(Account, vClient, Client))
 	{
-		PrintSerchClient(Client);
+		PrintSearchClient(Client);
 		cout << "\n PLEASE ENTER DEPOSIT NUMBER ?";
 		cin >> Deposit;
-
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
 		for (sClient& C : vClient)
 		{
@@ -465,7 +450,7 @@ bool DepositFromClient(string Account, vector<sClient>& vClient)
 void ShowDepositFromClient()
 {
 	cout << "-----------------------\n";
-	cout << "\Deposit Account Screen\n";
+	cout << "\tDeposit Account Screen\n";
 	cout << "-----------------------\n";
 	string Account = ReadAccount();
 	vector<sClient> vClient = LoadCleintsDataFromFile(ClientsFileName);
@@ -477,7 +462,7 @@ bool WithDrawFromClient(string Account, vector<sClient>& vClient)
 	int Withdraw;
 	if (FindClientByAccountNumber(Account, vClient, Client))
 	{
-		PrintSerchClient(Client);
+		PrintSearchClient(Client);
 
 		for (sClient& C : vClient)
 		{
@@ -485,7 +470,7 @@ bool WithDrawFromClient(string Account, vector<sClient>& vClient)
 			{
 				cout << "\n PLEASE ENTER WITHDRAW AMOUNT ?";
 				cin >> Withdraw;
-
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
 				while (Withdraw > C.AccountBalance)
 				{
 					cout << "\nAmount Exceeds The Balance, You Can Withdraw Up To: " << C.AccountBalance << endl;
@@ -560,7 +545,6 @@ void ShowTransactionsScreen()
 	cout << "[3] TOTAL BALANCE .\n";
 	cout << "[4] Main Menu .\n";
 	cout << "===============================\n";
-	cout << "CHOSE WHAT DO YOU WANT TO DO [1/4]?\n";
 	TransactionMenuoption((enTransactionMenu)ReadTransactionMenu());
 }
 void PerFormMainMenuOption(enMainMenuOptions MainMenuOptions)
@@ -588,7 +572,7 @@ void PerFormMainMenuOption(enMainMenuOptions MainMenuOptions)
 		GoBackToMainMenu();
 		break;
 	}
-	case enMainMenuOptions::UBDATECLIENTINFO:
+	case enMainMenuOptions::UPDATECLIENTINFO:
 	{
 		system("cls");
 		ShowUpdateClientScreen();
@@ -634,7 +618,6 @@ void ShowMainMenu()
 	cout << " [6] Transactions .\n";
 	cout << " [7] EXIT.\n";
 	cout << "===================================================\n";
-	cout << " CHOSE WHAT DO YOU WANT TO DO [1 TO 7] ?\n";
 	PerFormMainMenuOption((enMainMenuOptions)ReadMainMenuOption());
 
 }
