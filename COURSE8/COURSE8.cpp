@@ -93,13 +93,8 @@ int NumberOfDays(short Number,short Month)
 {
     if (Month < 1 || Month>12)
         return 0;
-    if (Month == 2)
-    {
-        return Leapyear(Number) ? 29 : 28;
-    }
-    short arr[12] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
 
-       
+    short arr[12] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
     return (Month==2)?(Leapyear(Number)?29:28):arr[Month-1];
  
 }
@@ -260,13 +255,13 @@ stDate AddMoreDaysToYears(int Day,stDate Date)
         }
         else
         {
-            Remining = MonthsDay;
+            Date.Day = Remining;
             break;
         }
     }
     return Date;
 }
-bool IsDate1BeforeDate2(stDate Date,stDate Date2)
+bool IsDate1BeforeDate2(stDate &Date,stDate &Date2)
 {
     return (Date.Year < Date2.Year) ? true : ((Date.Year == Date2.Year) ? (Date.Month < Date2.Month ? true : (Date.Month == Date2.Month ? Date.Day < Date2.Day : false)) : false);
 }
@@ -343,18 +338,5 @@ int main()
     stDate Date2 = GetSystemDate();
     cout << endl;
    cout << "Your Age Is : "<< CountYourDays(Date,Date2)<<" (Days)\n";
-   //cout <<"Diffrence (Include End Day ) Is : "<< DiffrentOfDate1AndDate2(Date, Date2,true)<<" (Days)";
-    //int Days =DaysToAdd();
-    
-    ////Date = AddMoreDaysToYears(Days, Date);
-    //if (IsEquvalant(Date,Date2))
-    //    cout << "Yes Date1 is Equnelant With Date2 \n";
-    //else
-    //    cout << "No Date1 is Biger or smaller than Date2 \n";
-
-
-   /* cout << "\nDate After adding [ " << Days << " ] is : " << endl;
-    
-     cout << Date.Day << "/" << Date.Month << "/" << Date.Year << endl;*/
-
+   
 }
