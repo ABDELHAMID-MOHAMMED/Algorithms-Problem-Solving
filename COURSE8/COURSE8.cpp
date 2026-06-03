@@ -307,6 +307,19 @@ int DiffrentOfDate1AndDate2(stDate Date, stDate Date2, bool IncludLastday = fals
     }
     return IncludLastday ? ++Diff : Diff;
 }
+int DiffrentOfDate1AndDate2WithMinus(stDate Date, stDate Date2, bool IncludLastday = false)
+{
+
+    if (IsDate1BeforeDate2(Date, Date2))
+    {
+        return DiffrentOfDate1AndDate2(Date, Date2, IncludLastday);
+    }
+    if (IsEquvalant(Date, Date2))
+    {
+        return 0;
+    }
+    return DiffrentOfDate1AndDate2(Date2, Date, IncludLastday) * -1;
+}
 int CountYourDays(stDate Date,stDate Date2)
 {
     int Days = 0;
@@ -333,10 +346,17 @@ stDate GetSystemDate()
 }
 int main()
 {
-    stDate Date=ReadFullDate();
+    cout << "Enter Date1:\n";
+    stDate Date1 = ReadFullDate();
     cout << endl;
-    stDate Date2 = GetSystemDate();
+
+    cout << "Enter Date2:\n";
+    stDate Date2 = ReadFullDate();
     cout << endl;
-   cout << "Your Age Is : "<< CountYourDays(Date,Date2)<<" (Days)\n";
+
+    cout << "Diffrence is : " << DiffrentOfDate1AndDate2WithMinus(Date1, Date2) << " Day(s).\n";
+    cout << "Diffrence (Including End Day) is : " << DiffrentOfDate1AndDate2WithMinus(Date1, Date2, true) << " Day(s).\n";
+ 
+   //cout << "Your Age Is : "<< CountYourDays(Date,Date2)<<" (Days)\n";
    
 }
