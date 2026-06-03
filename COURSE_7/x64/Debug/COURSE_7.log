@@ -1,0 +1,7 @@
+﻿  COURSE_7.cpp
+C:\Users\Abdo\source\repos\COURSE_7\COURSE_7\COURSE_7.cpp(29,23): warning C4267: '=': conversion from 'size_t' to 'short', possible loss of data
+C:\Users\Abdo\source\repos\COURSE_7\COURSE_7\COURSE_7.cpp(468,10): warning C4129: 'D': unrecognized character escape sequence
+C:\Users\Abdo\source\repos\COURSE_7\COURSE_7\COURSE_7.cpp(234,1): warning C4715: 'SerchClient': not all control paths return a value
+C:\Users\Abdo\source\repos\COURSE_7\COURSE_7\COURSE_7.cpp(349,1): warning C4715: 'DeleteClient': not all control paths return a value
+C:\Users\Abdo\source\repos\COURSE_7\COURSE_7\COURSE_7.cpp(392,1): warning C4715: 'UbdateClient': not all control paths return a value
+  COURSE_7.vcxproj -> C:\Users\Abdo\source\repos\COURSE_7\x64\Debug\COURSE_7.exe
