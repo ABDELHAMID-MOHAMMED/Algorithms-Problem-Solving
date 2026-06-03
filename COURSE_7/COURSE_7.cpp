@@ -93,7 +93,7 @@ void AddDataLineToFile(string FileName, string stLine)
 		ClientFile.close();
 	}
 }
-sClient ConvertLinetoRecord(string Line, string Seperator =" ")
+sClient ConvertLinetoRecord(string Line, string Seperator ="-")
 {
 	sClient Client;
 	vector<string> vClientData;
@@ -385,8 +385,8 @@ void ShowUpdateClientScreen()
 }
 void GoBackToMainMenu()
 {
-	cout << "\n\nPress any key to go back to Main Menu...";
-	system("pause>0");
+	/*cout << "\n\nPress any key to go back to Main Menu...";
+	system("pause>0");*/
 	ShowMainMenu();
 }
 void GoBackToTransactionMenu()
