@@ -85,17 +85,17 @@ string PrintTextNumber(short Number)
             PrintTextNumber(Number % 1000000000);
     }
 }
-bool Leapyear(short Number)
+bool Leapyear(short Year)
 {
     return (Number % 400 == 0 )|| (Number % 4 == 0 && Number % 100 != 0);
 }
-int NumberOfDays(short Number,short Month)
+int NumberOfDays(short Year,short Month)
 {
     if (Month < 1 || Month>12)
         return 0;
 
     short arr[12] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
-    return (Month==2)?(Leapyear(Number)?29:28):arr[Month-1];
+    return (Month==2)?(Leapyear(Year)?29:28):arr[Month-1];
  
 }
 int NumberOfHours(int Number, int Month)
@@ -234,7 +234,6 @@ stDate ReadFullDate()
     Date.Year= ReadYear();
     return Date;
 }
-
 stDate AddMoreDaysToYears(int Day,stDate Date)
 {
     int Remining = Day + PrintSpecificDay(Date.Day, Date.Month, Date.Year);
@@ -297,6 +296,87 @@ stDate IncreaseByOneDay(stDate &Date)
     }
     return Date;
 }
+stDate IncreaseDateByXDays(stDate Date, short XDays)
+{
+    for (short i = 0;i < XDays;i++)
+    {
+       Date= IncreaseByOneDay(Date);
+    }
+    return Date;
+}
+stDate IncreaseDateByOneWeek(stDate Date)
+{
+    for (short i = 0;i < 7;i++)
+    {
+        Date = IncreaseByOneDay(Date);
+    }
+    return Date;
+}
+stDate IncreaseDateByXWeek(stDate Date, int Weeks)
+{
+    for (short i = 0;i < Weeks;i++)
+    {
+        Date = IncreaseDateByOneWeek(Date);
+    }
+    return Date;
+}
+stDate IncreaseDateByOneMonth(stDate Date)
+{
+    if (Date.Month == 12)
+    {
+        Date.Year++;
+        Date.Month = 1;
+    }
+    else
+    {
+        Date.Month++;
+    }
+    short NumberOfDay = NumberOfDays(Date.Year, Date.Month);
+    if(Date.Day > NumberOfDay)
+    {
+        Date.Day = NumberOfDay;
+    }
+    return Date;
+}
+stDate IncreaseDateByXMonth(stDate Date,int Month)
+{
+    for (int i = 0;i < Month;i++)
+    {
+        Date = IncreaseDateByOneMonth(Date);
+    }
+    return Date;
+}
+stDate IncreaseDateByOneYear(stDate Date)
+{
+    Date.Year++;
+    return Date;
+}
+stDate IncreaseDateByXYear(stDate Date, int Year)
+{
+    for (int i = 0;i < Year;i++)
+    {
+        Date = IncreaseDateByOneYear(Date);
+    }
+    return Date;
+}
+stDate IncreaseDateByXYearFaster(stDate Date, int Years)
+{
+    Date.Year += Years;
+    return Date;
+}
+stDate IncreaseDateByOneDecade(stDate Date)
+{
+    Date.Year += 10;
+    return Date;
+}
+stDate IncreaseDateByXDecade(stDate Date, int Decade)
+{
+    for (int i = 0;i < Decade * 10;i++)
+    {
+        Date = IncreaseDateByOneYear(Date);
+    }
+    return Date;
+}
 int DiffrentOfDate1AndDate2(stDate Date, stDate Date2, bool IncludLastday = false)
 {
     int Diff = 0;
@@ -306,19 +386,6 @@ int DiffrentOfDate1AndDate2(stDate Date, stDate Date2, bool IncludLastday = fals
         Date = IncreaseByOneDay(Date);
     }
     return IncludLastday ? ++Diff : Diff;
-}
-int DiffrentOfDate1AndDate2WithMinus(stDate Date, stDate Date2, bool IncludLastday = false)
-{
-
-    if (IsDate1BeforeDate2(Date, Date2))
-    {
-        return DiffrentOfDate1AndDate2(Date, Date2, IncludLastday);
-    }
-    if (IsEquvalant(Date, Date2))
-    {
-        return 0;
-    }
-    return DiffrentOfDate1AndDate2(Date2, Date, IncludLastday) * -1;
 }
 int CountYourDays(stDate Date,stDate Date2)
 {
@@ -344,19 +411,91 @@ stDate GetSystemDate()
 
     return Date;
 }
+void SwapDates(stDate& Date, stDate& Date2)
+{
+    stDate Tempdate;
+
+    Tempdate.Day = Date.Day;
+    Tempdate.Month = Date.Month;
+    Tempdate.Year = Date.Year;
+
+    Date.Day = Date2.Day;
+    Date.Month = Date2.Month;
+    Date.Year = Date2.Year;
+
+    Date2.Day = Tempdate.Day;
+    Date2.Month = Tempdate.Month;
+    Date2.Year = Tempdate.Year;
+
+}
+int DiffrentOfDate1AndDate2WithMinus(stDate Date, stDate Date2, bool IncludLastday = false)
+{
+    int Days = 0;
+    int SwapFlagValue = 1;
+
+    if (!IsDate1BeforeDate2(Date, Date2))
+    {
+        //Swap Dates 
+        SwapDates(Date, Date2);
+        SwapFlagValue = -1;
+    }
+    while (IsDate1BeforeDate2(Date, Date2))
+    {
+        Days++;
+        Date = IncreaseByOneDay(Date);
+    }
+    return IncludLastday ? ++Days * SwapFlagValue : Days * SwapFlagValue;
+}
+
+stDate DecreaseDateByOneDay(stDate Date)
+{
+    if (Date.Day == 1 && Date.Month == 1)
+    {
+        Date.Month--;
+        Date.Year--;
+        Date.Day = NumberOfDays(Date.Year, Date.Month);
+    }
+  
+    else if (Date.Day == 1)
+    {
+        Date.Month--;
+        Date.Day = NumberOfDays(Date.Year, Date.Month);
+    }
+    else
+    {
+        Date.Day--;
+    }
+    return Date;
+}
+
+
+
 int main()
 {
     cout << "Enter Date1:\n";
     stDate Date1 = ReadFullDate();
     cout << endl;
+    Date1= IncreaseByOneDay(Date1);
+    cout << "01-Adding One Day Is : " << Date1.Day<<"/"<<Date1.Month<<"/"<<Date1.Year<<endl;
+    Date1 = IncreaseDateByXDays(Date1, 10);
+    cout << "02-Adding 10 Days Is : " << Date1.Day << "/" << Date1.Month << "/" << Date1.Year << endl;
+    Date1 = IncreaseDateByOneWeek(Date1);
+    cout << "03-Adding One Week Is : " << Date1.Day << "/" << Date1.Month << "/" << Date1.Year << endl;
+    Date1 = IncreaseDateByXWeek(Date1,10);
+    cout << "04-Adding 10 Weeks Is : " << Date1.Day << "/" << Date1.Month << "/" << Date1.Year << endl;
+    Date1 = IncreaseDateByOneMonth(Date1);
+    cout << "05-Adding One Month Is : " << Date1.Day << "/" << Date1.Month << "/" << Date1.Year << endl;
+    Date1 = IncreaseDateByXMonth(Date1, 5);
+    cout << "06-Adding 5 Month Is : " << Date1.Day << "/" << Date1.Month << "/" << Date1.Year << endl;
+    Date1 = IncreaseDateByOneYear(Date1);
+    cout << "07-Adding One Year Is : " << Date1.Day << "/" << Date1.Month << "/" << Date1.Year << endl;
+    Date1 = IncreaseDateByXYear(Date1, 10);
+    cout << "08-Adding 10 Year Is : " << Date1.Day << "/" << Date1.Month << "/" << Date1.Year << endl;
 
-    cout << "Enter Date2:\n";
-    stDate Date2 = ReadFullDate();
-    cout << endl;
+    Date1 = IncreaseDateByOneDecade(Date1);
+    cout << "10-Adding one Decade Is : " << Date1.Day << "/" << Date1.Month << "/" << Date1.Year << endl;
+    Date1 = IncreaseDateByXDecade(Date1, 10);
+    cout << "11-Adding 10 Decade Is : " << Date1.Day << "/" << Date1.Month << "/" << Date1.Year << endl;
 
-    cout << "Diffrence is : " << DiffrentOfDate1AndDate2WithMinus(Date1, Date2) << " Day(s).\n";
-    cout << "Diffrence (Including End Day) is : " << DiffrentOfDate1AndDate2WithMinus(Date1, Date2, true) << " Day(s).\n";
- 
-   //cout << "Your Age Is : "<< CountYourDays(Date,Date2)<<" (Days)\n";
-   
+
 }
