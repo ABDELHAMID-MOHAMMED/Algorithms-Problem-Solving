@@ -592,45 +592,53 @@ short DaysUntilEndOfYear(stDate Date)
     return DiffrentOfDate1AndDate2(Date, EndOfYearDate, true);
 
 }
+short CalculateVacationDays(stDate Date, stDate Date2)
+{
+
+    int VacationDayCount = 0;
+    while (IsDate1BeforeDate2(Date, Date2))
+    {
+        if (IsBussinessDay(Date))
+            VacationDayCount++;
+
+        Date = IncreaseByOneDay(Date);
+    }
+    return VacationDayCount;
+}
+stDate CalculateVacationReturnDate(stDate Date,short VacationDays)
+{
+    short WeekEndCounter = 0;
+    while (IsWeekEnd(Date))
+    {
+        Date = IncreaseByOneDay(Date);
+    }
+    for (short i = 1;i <= VacationDays + WeekEndCounter;i++)
+    {
+        if (IsWeekEnd(Date))
+        {
+            WeekEndCounter++;
+        }
+        Date = IncreaseByOneDay(Date);
+    }
+    while (IsWeekEnd(Date))
+    {
+        Date = IncreaseByOneDay(Date);
+
+    }
+    return Date;
+}
     int main()
     {
-        cout << "Enter Date1:\n";
-        stDate Date1 = GetSystemDate(); 
+        cout << "Vacation Start :\n";
+        stDate Date1 = ReadFullDate(); 
+        cout << "Vacation End :\n";
+        short Vacation = ReadDay();
         cout << endl; 
-   
-        cout << "Today Is : " << PrintDay(Dayorder(Date1)) << " , ";
+        Date1 = CalculateVacationReturnDate(Date1, Vacation);
+        cout << "Return Day : " << PrintDay(Dayorder(Date1)) << " , ";
+      
         cout << Date1.Day << "/" << Date1.Month << "/" << Date1.Year << endl;
-        cout << "\n Is It End Of Week ?\n";
-        if (IsItEndOfWeek(Date1))
-        {
-            cout << "Yes Its End Of Week \n";
-        }
-        else
-        {
-            cout << "No Not End Of Week \n";
-        }
-        cout << "\nIs It WeekEnd ? \n";
-        if (IsWeekEnd(Date1))
-        {
-            cout << "Yes Its WeekEnd \n";
-        }
-        else
-        {
-            cout << "No Its Not WeekEnd \n";
-        }
-        cout << "\nIs It Bussiness Day ? \n";
-        if (IsBussinessDay(Date1))
-        {
-            cout << "Yes Its Bussiness Day \n";
-        }
-        else
-        {
-            cout << "No Its Not Bussiness Day \n";
-        }
-        cout << "\n\nDays Until End Of Week : " << DaysUntilEndOfWeek(Date1)<<" (Days) "<<endl;
-        cout << "\n\nDays Until End Of Month : " << DaysUntilEndOfMonth(Date1) << " (Days) " << endl;
-        cout << "\n\nDays Until End Of Year : " << DaysUntilEndOfYear(Date1) << " (Days) " << endl;
-
+       
         return 0;
     
 }
