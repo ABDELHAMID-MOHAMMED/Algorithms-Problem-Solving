@@ -87,7 +87,7 @@ string PrintTextNumber(short Number)
 }
 bool Leapyear(short Year)
 {
-    return (Number % 400 == 0 )|| (Number % 4 == 0 && Number % 100 != 0);
+    return (Year % 400 == 0 )|| (Year % 4 == 0 && Year % 100 != 0);
 }
 int NumberOfDays(short Year,short Month)
 {
@@ -120,7 +120,7 @@ short DayOrder(short Day, short Month, short Year)
 }
 string PrintDay(short day)
 {
-    string days[] = {"sun","mon","tus","wed","thurs","fry" ,"sat"};
+    string days[] = {"sun","mon","tus","wed","thurs","fri" ,"sat"};
     return days[day];
 }
 string PrintMonth(short Month)
@@ -446,14 +446,13 @@ int DiffrentOfDate1AndDate2WithMinus(stDate Date, stDate Date2, bool IncludLastd
     }
     return IncludLastday ? ++Days * SwapFlagValue : Days * SwapFlagValue;
 }
-
 stDate DecreaseDateByOneDay(stDate Date)
 {
     if (Date.Day == 1 && Date.Month == 1)
     {
-        Date.Month--;
+        Date.Month=12;
         Date.Year--;
-        Date.Day = NumberOfDays(Date.Year, Date.Month);
+        Date.Day = 31;
     }
   
     else if (Date.Day == 1)
@@ -467,35 +466,163 @@ stDate DecreaseDateByOneDay(stDate Date)
     }
     return Date;
 }
-
-
-
-int main()
+stDate DecreaseDateByXDays(stDate Date, short XDays)
 {
-    cout << "Enter Date1:\n";
-    stDate Date1 = ReadFullDate();
-    cout << endl;
-    Date1= IncreaseByOneDay(Date1);
-    cout << "01-Adding One Day Is : " << Date1.Day<<"/"<<Date1.Month<<"/"<<Date1.Year<<endl;
-    Date1 = IncreaseDateByXDays(Date1, 10);
-    cout << "02-Adding 10 Days Is : " << Date1.Day << "/" << Date1.Month << "/" << Date1.Year << endl;
-    Date1 = IncreaseDateByOneWeek(Date1);
-    cout << "03-Adding One Week Is : " << Date1.Day << "/" << Date1.Month << "/" << Date1.Year << endl;
-    Date1 = IncreaseDateByXWeek(Date1,10);
-    cout << "04-Adding 10 Weeks Is : " << Date1.Day << "/" << Date1.Month << "/" << Date1.Year << endl;
-    Date1 = IncreaseDateByOneMonth(Date1);
-    cout << "05-Adding One Month Is : " << Date1.Day << "/" << Date1.Month << "/" << Date1.Year << endl;
-    Date1 = IncreaseDateByXMonth(Date1, 5);
-    cout << "06-Adding 5 Month Is : " << Date1.Day << "/" << Date1.Month << "/" << Date1.Year << endl;
-    Date1 = IncreaseDateByOneYear(Date1);
-    cout << "07-Adding One Year Is : " << Date1.Day << "/" << Date1.Month << "/" << Date1.Year << endl;
-    Date1 = IncreaseDateByXYear(Date1, 10);
-    cout << "08-Adding 10 Year Is : " << Date1.Day << "/" << Date1.Month << "/" << Date1.Year << endl;
+    for (short i = 0;i < XDays;i++)
+    {
+        Date = DecreaseDateByOneDay(Date);
+    }
+    return Date;
+}
+stDate DecreaseDateByOneWeek(stDate Date)
+{
+    for (short i = 0;i < 7;i++)
+    {
+        Date = DecreaseDateByOneDay(Date);
+    }
+    return Date;
+}
+stDate DecreaseDateByXWeek(stDate Date, int Weeks)
+{
+    for (short i = 0;i < Weeks;i++)
+    {
+        Date = DecreaseDateByOneWeek(Date);
+    }
+    return Date;
+}
+stDate DecreaseDateByOneMonth(stDate Date)
+{
+    if (Date.Month == 1)
+    {
+        Date.Year--;
+        Date.Month = 12;
+    }
+    else
+    {
+        Date.Month--;
+    }
+    short NumberOfDay = NumberOfDays(Date.Year, Date.Month);
+    if (Date.Day > NumberOfDay)
+    {
+        Date.Day = NumberOfDay;
+    }
+    return Date;
+}
+stDate DecreaseDateByXMonth(stDate Date, int Month)
+{
+    for (int i = 0;i < Month;i++)
+    {
+        Date = DecreaseDateByOneMonth(Date);
+    }
+    return Date;
+}
+stDate DecreaseDateByOneYear(stDate Date)
+{
+    Date.Year--;
+    short NumberOfDay = NumberOfDays(Date.Year, Date.Month);
+    if (Date.Day > NumberOfDay)
+    {
+        Date.Day = NumberOfDay;
+    }
+    return Date;
+}
+stDate DecreaseDateByXYear(stDate Date, int Year)
+{
+    Date.Year -= Year;
+    short NumberOfDay = NumberOfDays(Date.Year, Date.Month);
+    if (Date.Day > NumberOfDay)
+    {
+        Date.Day = NumberOfDay;
+    }
+    return Date;
+}
+stDate DecreaseDateByXYearFaster(stDate Date, int Years)
+{
+   
+    return DecreaseDateByXYear(Date,Years);
+}
+stDate DecreaseDateByOneDecade(stDate Date)
+{
+    return DecreaseDateByXYear(Date, 10);
+}
+stDate DecreaseDateByXDecade(stDate Date, int Decade)
+{
+    return DecreaseDateByXYear(Date, Decade * 10);
+}
+short Dayorder(stDate Date)
+{
+    return DayOrder(Date.Day, Date.Month, Date.Year);
+}
+bool IsItEndOfWeek(stDate Date)
+{
+    return (DayOrder(Date.Day,Date.Month,Date.Year)==6);
+}
+bool IsWeekEnd(stDate Date)
+{
+    short DayIndex = DayOrder(Date.Day, Date.Month, Date.Year);
+    return (DayIndex==5||DayIndex==6);
+}
+bool IsBussinessDay(stDate Date)
+{
+    return !IsWeekEnd(Date);
+}
+short DaysUntilEndOfWeek(stDate Date)
+{
+    short DayIndex = DayOrder(Date.Day, Date.Month, Date.Year);
 
-    Date1 = IncreaseDateByOneDecade(Date1);
-    cout << "10-Adding one Decade Is : " << Date1.Day << "/" << Date1.Month << "/" << Date1.Year << endl;
-    Date1 = IncreaseDateByXDecade(Date1, 10);
-    cout << "11-Adding 10 Decade Is : " << Date1.Day << "/" << Date1.Month << "/" << Date1.Year << endl;
+    return 6 - DayIndex;
+}
+short DaysUntilEndOfMonth(stDate Date)
+{
+    short TotalDayInMonth = NumberOfDays(Date.Year, Date.Month);
+ 
+    return TotalDayInMonth - Date.Day;
+}
+short DaysUntilEndOfYear(stDate Date)
+{
+    short TotalYearDays = Leapyear(Date.Year) ? 366 : 365;
+    short DayPassed = PrintSpecificDay(Date.Day, Date.Month, Date.Year);
+    return TotalYearDays - DayPassed;
+}
+    int main()
+    {
+        cout << "Enter Date1:\n";
+        stDate Date1 = GetSystemDate(); 
+        cout << endl; 
+   
+        cout << "Today Is : " << PrintDay(Dayorder(Date1)) << " , ";
+        cout << Date1.Day << "/" << Date1.Month << "/" << Date1.Year << endl;
+        cout << "\n Is It End Of Week ?\n";
+        if (IsItEndOfWeek(Date1))
+        {
+            cout << "Yes Its End Of Week \n";
+        }
+        else
+        {
+            cout << "No Not End Of Week \n";
+        }
+        cout << "\nIs It WeekEnd ? \n";
+        if (IsWeekEnd(Date1))
+        {
+            cout << "Yes Its WeekEnd \n";
+        }
+        else
+        {
+            cout << "No Its Not WeekEnd \n";
+        }
+        cout << "\nIs It Bussiness Day ? \n";
+        if (IsBussinessDay(Date1))
+        {
+            cout << "Yes Its Bussiness Day \n";
+        }
+        else
+        {
+            cout << "No Its Not Bussiness Day \n";
+        }
+        cout << "\n\nDays Until End Of Week : " << DaysUntilEndOfWeek(Date1)<<endl;
+        cout << "\n\nDays Until End Of Month : " << DaysUntilEndOfMonth(Date1) << endl;
+        cout << "\n\nDays Until End Of Year : " << DaysUntilEndOfYear(Date1) << endl;
 
-
+        return 0;
+    
 }
