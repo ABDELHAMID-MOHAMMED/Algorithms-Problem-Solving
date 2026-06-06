@@ -574,15 +574,23 @@ short DaysUntilEndOfWeek(stDate Date)
 }
 short DaysUntilEndOfMonth(stDate Date)
 {
-    short TotalDayInMonth = NumberOfDays(Date.Year, Date.Month);
- 
-    return TotalDayInMonth - Date.Day;
+    stDate EndOfMonthDate;
+    EndOfMonthDate.Day = NumberOfDays(Date.Year, Date.Month);
+    EndOfMonthDate.Month = Date.Month;
+    EndOfMonthDate.Year = Date.Year;
+
+    return DiffrentOfDate1AndDate2(Date, EndOfMonthDate, true);
+
 }
 short DaysUntilEndOfYear(stDate Date)
 {
-    short TotalYearDays = Leapyear(Date.Year) ? 366 : 365;
-    short DayPassed = PrintSpecificDay(Date.Day, Date.Month, Date.Year);
-    return TotalYearDays - DayPassed;
+    stDate EndOfYearDate;
+    EndOfYearDate.Day = 31;
+    EndOfYearDate.Month = 12;
+    EndOfYearDate.Year = Date.Year;
+
+    return DiffrentOfDate1AndDate2(Date, EndOfYearDate, true);
+
 }
     int main()
     {
@@ -619,9 +627,9 @@ short DaysUntilEndOfYear(stDate Date)
         {
             cout << "No Its Not Bussiness Day \n";
         }
-        cout << "\n\nDays Until End Of Week : " << DaysUntilEndOfWeek(Date1)<<endl;
-        cout << "\n\nDays Until End Of Month : " << DaysUntilEndOfMonth(Date1) << endl;
-        cout << "\n\nDays Until End Of Year : " << DaysUntilEndOfYear(Date1) << endl;
+        cout << "\n\nDays Until End Of Week : " << DaysUntilEndOfWeek(Date1)<<" (Days) "<<endl;
+        cout << "\n\nDays Until End Of Month : " << DaysUntilEndOfMonth(Date1) << " (Days) " << endl;
+        cout << "\n\nDays Until End Of Year : " << DaysUntilEndOfYear(Date1) << " (Days) " << endl;
 
         return 0;
     
