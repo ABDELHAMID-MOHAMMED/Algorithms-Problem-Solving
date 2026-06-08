@@ -2,12 +2,13 @@
 #include <iostream>
 #include <string>
 #include <ctime>
+#include <vector>
 using namespace std;
 
 short ReadYear()
 {
     short Number = 0;
-    cout << "PLEASE ENTER NUMBER : ";
+    cout << "PLEASE ENTER Year : ";
     cin >> Number;
     return Number;
 }
@@ -133,6 +134,10 @@ struct stDate {
     int Month;
     int Day;
 };
+struct stPeriod {
+    stDate StartDate;
+    stDate EndDate;
+};
 stDate DateOrderInYear(int DateOrder, int Year)
 {
     stDate Date;
@@ -234,6 +239,7 @@ stDate ReadFullDate()
     Date.Year= ReadYear();
     return Date;
 }
+
 stDate AddMoreDaysToYears(int Day,stDate Date)
 {
     int Remining = Day + PrintSpecificDay(Date.Day, Date.Month, Date.Year);
@@ -264,9 +270,14 @@ bool IsDate1BeforeDate2(stDate &Date,stDate &Date2)
 {
     return (Date.Year < Date2.Year) ? true : ((Date.Year == Date2.Year) ? (Date.Month < Date2.Month ? true : (Date.Month == Date2.Month ? Date.Day < Date2.Day : false)) : false);
 }
+
 bool IsEquvalant(stDate Date, stDate Date2)
 {
     return (Date.Year == Date2.Year && Date.Month == Date2.Month && Date.Day == Date2.Day);
+}
+bool IsDate1AfterDate2(stDate Date, stDate Date2)
+{
+    return (!IsDate1BeforeDate2(Date, Date2) && !IsEquvalant(Date, Date2));
 }
 bool IsLastday(stDate Date)
 {
@@ -386,6 +397,37 @@ int DiffrentOfDate1AndDate2(stDate Date, stDate Date2, bool IncludLastday = fals
         Date = IncreaseByOneDay(Date);
     }
     return IncludLastday ? ++Diff : Diff;
+}
+string ReplaceWordInString(string S1, string StringToReplace, string sReplaceTo)
+{
+    short pos = S1.find(StringToReplace);
+    while (pos != std::string::npos)
+    {
+        S1 = S1.replace(pos, StringToReplace.length(), sReplaceTo);
+        pos = S1.find(StringToReplace);
+    }
+    return S1;
+}
+vector<string> SplitString(string S1, string Delim)
+{
+    vector<string> vString;
+    short pos = 0;
+    string sWord; // define a string variable
+    // use find() function to get the position of the delimiters
+    while ((pos = S1.find(Delim)) != std::string::npos)
+    {
+        sWord = S1.substr(0, pos); // store the word
+        if (sWord != "")
+        {
+            vString.push_back(sWord);
+        }
+        S1.erase(0, pos + Delim.length());
+    }
+    if (S1 != "")
+    {
+        vString.push_back(S1); // it adds last word of the string.
+    }
+    return vString;
 }
 int CountYourDays(stDate Date,stDate Date2)
 {
@@ -627,18 +669,152 @@ stDate CalculateVacationReturnDate(stDate Date,short VacationDays)
     }
     return Date;
 }
-    int main()
+enum EnDate{Befor=-1,Equal=0,After=1};
+short CompareDates(stDate Date1, stDate Date2)
+{
+    if (IsDate1BeforeDate2(Date1, Date2))
     {
-        cout << "Vacation Start :\n";
-        stDate Date1 = ReadFullDate(); 
-        cout << "Vacation End :\n";
-        short Vacation = ReadDay();
-        cout << endl; 
-        Date1 = CalculateVacationReturnDate(Date1, Vacation);
-        cout << "Return Day : " << PrintDay(Dayorder(Date1)) << " , ";
-      
-        cout << Date1.Day << "/" << Date1.Month << "/" << Date1.Year << endl;
-       
+        return   EnDate::Befor;
+    }
+    if (IsEquvalant(Date1, Date2))
+    {
+        return  EnDate::Equal;
+    }
+
+    return  EnDate::After;
+}
+bool IsOverLapDates(stPeriod Period, stPeriod Period2)
+{
+    if (
+        CompareDates(Period2.EndDate, Period.StartDate) == EnDate::Befor
+        || CompareDates(Period2.StartDate, Period.EndDate) == EnDate::After
+        )
+        return false;
+    else
+        return true;
+}
+stPeriod ReadPeriod()
+{
+    stPeriod Period;
+    cout << "\nEnter Start Dates : \n";
+    Period.StartDate = ReadFullDate();
+    cout << "\nEnter End Dates : \n";
+    Period.EndDate = ReadFullDate();
+    return Period;
+}
+int PeriodLengthInDays(stPeriod Period, bool IncludEndDate = false)
+{
+    return DiffrentOfDate1AndDate2(Period.StartDate, Period.EndDate, IncludEndDate);
+}
+bool IsDateWithinPeriod(stDate Date, stPeriod Period)
+{
+    return !(CompareDates(Date, Period.StartDate) == EnDate::Befor)
+        || (CompareDates(Date, Period.EndDate) == EnDate::After);
+}
+int CountOverLapdays(stPeriod Period1, stPeriod Period2)
+{
+    int Period1Length = PeriodLengthInDays(Period1, true);;
+    int Period2Length = PeriodLengthInDays(Period2, true);;
+    int OverLapDays = 0;
+    if (!IsOverLapDates(Period1, Period2))
+        return 0;
+
+    if (Period1Length < Period2Length)
+    {
+        while (IsDate1BeforeDate2(Period1.StartDate, Period1.EndDate))
+        {
+            if (IsDateWithinPeriod(Period1.StartDate, Period2))
+                OverLapDays++;
+                Period1.StartDate = IncreaseByOneDay(Period1.StartDate);
+        }
+    }
+    else
+    {
+        while (IsDate1BeforeDate2(Period2.StartDate, Period2.EndDate))
+        {
+            if (IsDateWithinPeriod(Period2.StartDate, Period1))
+                OverLapDays++;
+            Period2.StartDate = IncreaseByOneDay(Period2.StartDate);
+        }
+    }
+    return OverLapDays;
+}
+bool IsValidDate(stDate Date)
+{
+    if (Date.Day < 1 || Date.Day>31)
+        return false;
+    if (Date.Month < 1 || Date.Month>12)
+        return false;
+    if (Date.Month == 2)
+    {
+        if (Leapyear(Date.Year))
+        {
+            if (Date.Day > 29)
+                return false;
+        }
+        else
+        {
+            if (Date.Day > 28)
+                return false;
+        }
+    }
+        short DaysInMonth=(NumberOfDays(Date.Year, Date.Month));
+
+        if (Date.Day > DaysInMonth)
+        return false;
+        
+
+        return true;
+    }
+stDate StringToDate(string DateSting)
+{
+    stDate Date;
+    vector<string>VDate;
+    VDate = SplitString(DateSting, "/");
+    
+    Date.Day = stoi(VDate[0]);
+    Date.Month = stoi(VDate[1]);
+    Date.Year = stoi(VDate[2]);
+
+    return Date;
+}
+string DateToString(stDate Date)
+{
+    return to_string(Date.Day) + "/" + to_string(Date.Month) + "/" + to_string(Date.Year);
+}
+string ReadText()
+{
+    string Text;
+    cout << "Enter Text : ";
+    getline(cin >> ws, Text);
+    return Text;
+}
+string FromatDate(stDate Date,string DateFormat="dd/mm/yyyy")
+{
+    string FormatDateString = "";
+    FormatDateString = ReplaceWordInString(DateFormat, "dd", to_string(Date.Day));
+    FormatDateString = ReplaceWordInString(FormatDateString, "mm", to_string(Date.Month));
+    FormatDateString = ReplaceWordInString(FormatDateString, "yyyy", to_string(Date.Year));
+
+    return FormatDateString;
+
+}
+int main()
+{
+        string Text = ReadText();
+        cout << endl;
+
+        stDate Date = StringToDate(Text);
+
+        cout << "\n" << FromatDate(Date) << "\n";
+
+        cout << "\n" << FromatDate(Date,"yyyy/dd/mm") << "\n";
+        cout << "\n" << FromatDate(Date,"mm/dd/yyyy") << "\n";
+        cout << "\n" << FromatDate(Date,"mm-dd-yyyy") << "\n";
+        cout << "\n" << FromatDate(Date,"dd-mm-yyyy") << "\n";
+        cout << "\n" << FromatDate(Date,"day:dd , month:mm , year:yyyy") << "\n";
+
+
         return 0;
     
 }
