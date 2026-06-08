@@ -1,5 +1,0 @@
-﻿  COURSE_7.cpp
-C:\Users\Abdo\source\repos\COURSE_7\COURSE_7\COURSE_7.cpp(30,23): warning C4267: '=': conversion from 'size_t' to 'short', possible loss of data
-C:\Users\Abdo\source\repos\COURSE_7\COURSE_7\COURSE_7.cpp(332,1): warning C4715: 'DeleteClient': not all control paths return a value
-C:\Users\Abdo\source\repos\COURSE_7\COURSE_7\COURSE_7.cpp(375,1): warning C4715: 'UpdateClient': not all control paths return a value
-  COURSE_7.vcxproj -> C:\Users\Abdo\source\repos\COURSE_7\x64\Debug\COURSE_7.exe

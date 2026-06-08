@@ -383,12 +383,6 @@ void ShowUpdateClientScreen()
 	string Account = ReadAccount();
 	UpdateClient(Account, vClient);
 }
-void GoBackToMainMenu()
-{
-	/*cout << "\n\nPress any key to go back to Main Menu...";
-	system("pause>0");*/
-	ShowMainMenu();
-}
 void GoBackToTransactionMenu()
 {
 	cout << "\n\nPress any key to go back to Transaction Menu...";
@@ -531,7 +525,7 @@ void TransactionMenuoption(enTransactionMenu TransactionMenu)
 	case enTransactionMenu::MainMenu:
 	{
 		system("cls");
-		GoBackToMainMenu();
+		ShowMainMenu();
 		break;
 	}
 	}
