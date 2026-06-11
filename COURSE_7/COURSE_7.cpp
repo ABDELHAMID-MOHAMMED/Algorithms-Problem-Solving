@@ -1060,7 +1060,6 @@ bool NormalWithDrawFromClient(string Account, vector<sClient>& vClient)
 	return false;
 
 }
-
 void ShowWithdrawFromClient()
 {
 	cout << "-----------------------\n";
